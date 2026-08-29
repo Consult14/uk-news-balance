@@ -1,11 +1,22 @@
 import Link from "next/link";
-import { CATEGORIES } from "@/lib/config";
+import { CATEGORIES, CategoryId, NewsSourceId } from "@/lib/config";
 
 interface CategoryNavProps {
   activeId?: string;
+  activeSourceId?: NewsSourceId | "all";
 }
 
-export function CategoryNav({ activeId }: CategoryNavProps) {
+function buildCategoryHref(
+  categoryId: CategoryId,
+  activeSourceId?: NewsSourceId | "all",
+) {
+  if (activeSourceId && activeSourceId !== "all") {
+    return `/${categoryId}?source=${activeSourceId}`;
+  }
+  return `/${categoryId}`;
+}
+
+export function CategoryNav({ activeId, activeSourceId }: CategoryNavProps) {
   return (
     <nav
       className="scrollbar-hide -mx-4 flex gap-2 overflow-x-auto px-4 pb-1"
@@ -16,7 +27,7 @@ export function CategoryNav({ activeId }: CategoryNavProps) {
         return (
           <Link
             key={category.id}
-            href={`/${category.id}`}
+            href={buildCategoryHref(category.id, activeSourceId)}
             className={`flex shrink-0 items-center gap-1.5 rounded-full px-4 py-2.5 text-sm font-medium transition-colors ${
               isActive
                 ? "bg-slate-900 text-white shadow-sm"
@@ -32,7 +43,7 @@ export function CategoryNav({ activeId }: CategoryNavProps) {
   );
 }
 
-export function BottomNav({ activeId }: CategoryNavProps) {
+export function BottomNav({ activeId, activeSourceId }: CategoryNavProps) {
   return (
     <nav
       className="fixed inset-x-0 bottom-0 z-50 border-t border-slate-200 bg-white/95 backdrop-blur md:hidden"
@@ -44,7 +55,7 @@ export function BottomNav({ activeId }: CategoryNavProps) {
           return (
             <Link
               key={category.id}
-              href={`/${category.id}`}
+              href={buildCategoryHref(category.id, activeSourceId)}
               className={`flex min-w-[4rem] shrink-0 flex-col items-center gap-0.5 rounded-lg px-2 py-1.5 text-[10px] font-medium ${
                 isActive
                   ? "bg-slate-100 text-slate-900"
