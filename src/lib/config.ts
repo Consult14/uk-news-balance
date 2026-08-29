@@ -197,3 +197,7 @@ export const SOURCE_ORDER: NewsSourceId[] = [
   "dailymail",
   "sky",
 ];
+
+export function isNewsSourceId(value: string): value is NewsSourceId {
+  return value in NEWS_SOURCES;
+}

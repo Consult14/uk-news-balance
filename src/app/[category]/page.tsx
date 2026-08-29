@@ -1,10 +1,13 @@
 import { notFound } from "next/navigation";
 import { BottomNav, CategoryNav } from "@/components/CategoryNav";
 import { SourceColumn, SOURCE_ORDER } from "@/components/NewsCard";
+import { SourceNav } from "@/components/SourceNav";
 import {
   CATEGORIES,
   CategoryId,
   getCategory,
+  isNewsSourceId,
+  NewsSourceId,
 } from "@/lib/config";
 import { fetchCategoryNews } from "@/lib/rss";
 
@@ -12,6 +15,7 @@ export const revalidate = 1800;
 
 interface PageProps {
   params: Promise<{ category: string }>;
+  searchParams: Promise<{ source?: string }>;
 }
 
 export function generateStaticParams() {
@@ -29,15 +33,22 @@ export async function generateMetadata({ params }: PageProps) {
   };
 }
 
-export default async function CategoryPage({ params }: PageProps) {
+export default async function CategoryPage({ params, searchParams }: PageProps) {
   const { category: categoryId } = await params;
+  const { source: sourceParam } = await searchParams;
   const isValid = CATEGORIES.some((c) => c.id === categoryId);
   if (!isValid) notFound();
+
+  const activeSource: NewsSourceId | "all" =
+    sourceParam && isNewsSourceId(sourceParam) ? sourceParam : "all";
+
+  const visibleSources =
+    activeSource === "all" ? SOURCE_ORDER : [activeSource];
 
   const category = getCategory(categoryId as CategoryId);
   const itemsBySource = await fetchCategoryNews(
     category.id,
-    SOURCE_ORDER,
+    visibleSources,
   );
 
   const fetchedAt = new Date().toLocaleString("en-GB", {
@@ -47,8 +58,8 @@ export default async function CategoryPage({ params }: PageProps) {
     minute: "2-digit",
   });
 
-  const totalStories = SOURCE_ORDER.reduce(
-    (sum, sourceId) => sum + itemsBySource[sourceId].length,
+  const totalStories = visibleSources.reduce(
+    (sum, sourceId) => sum + (itemsBySource[sourceId]?.length ?? 0),
     0,
   );
 
@@ -71,7 +82,8 @@ export default async function CategoryPage({ params }: PageProps) {
             </div>
           </div>
           <p className="mb-3 text-sm text-slate-600">{category.description}</p>
-          <CategoryNav activeId={category.id} />
+          <CategoryNav activeId={category.id} activeSourceId={activeSource} />
+          <SourceNav categoryId={category.id} activeSourceId={activeSource} />
         </div>
       </header>
 
@@ -81,12 +93,18 @@ export default async function CategoryPage({ params }: PageProps) {
           the full article on the original site.
         </p>
 
-        <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-          {SOURCE_ORDER.map((sourceId) => (
+        <div
+          className={`grid gap-5 ${
+            visibleSources.length === 1
+              ? "max-w-xl"
+              : "md:grid-cols-2 xl:grid-cols-3"
+          }`}
+        >
+          {visibleSources.map((sourceId) => (
             <SourceColumn
               key={sourceId}
               sourceId={sourceId}
-              items={itemsBySource[sourceId]}
+              items={itemsBySource[sourceId] ?? []}
             />
           ))}
         </div>
@@ -97,7 +115,7 @@ export default async function CategoryPage({ params }: PageProps) {
         use via public RSS feeds.
       </footer>
 
-      <BottomNav activeId={category.id} />
+      <BottomNav activeId={category.id} activeSourceId={activeSource} />
     </div>
   );
 }
