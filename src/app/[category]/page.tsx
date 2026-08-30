@@ -88,11 +88,6 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
       </header>
 
       <main className="px-4 py-5">
-        <p className="mb-5 rounded-xl bg-white px-4 py-3 text-sm leading-relaxed text-slate-600 ring-1 ring-slate-200">
-          Headlines from five UK outlets side by side. Tap any story to read
-          the full article on the original site.
-        </p>
-
         <div
           className={`grid gap-5 ${
             visibleSources.length === 1
