@@ -19,7 +19,7 @@ export function SourceNav({
   categoryId,
   activeSourceId,
   activeLean = "all",
-  activeView = "grouped",
+  activeView = "columns",
 }: SourceNavProps) {
   return (
     <nav

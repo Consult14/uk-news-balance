@@ -20,7 +20,7 @@ export function LeanNav({
   categoryId,
   activeLean,
   activeSourceId,
-  activeView = "grouped",
+  activeView = "columns",
 }: LeanNavProps) {
   const options: { id: PoliticalLean | "all"; label: string; color?: string }[] =
     [

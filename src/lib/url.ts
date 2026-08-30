@@ -24,7 +24,7 @@ export function buildCategoryPageHref(
     params.set("lean", options.lean);
   }
 
-  if (options?.view && options.view !== "grouped") {
+  if (options?.view && options.view !== "columns") {
     params.set("view", options.view);
   }
 

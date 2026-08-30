@@ -75,9 +75,17 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
     leanParam && isPoliticalLean(leanParam) ? leanParam : "all";
 
   const activeView: ViewMode =
-    viewParam && isViewMode(viewParam) ? viewParam : "grouped";
+    viewParam && isViewMode(viewParam) ? viewParam : "columns";
 
   const showSourceColumn = activeSource !== "all" && activeView === "columns";
+  const showLeanColumns =
+    activeView === "columns" &&
+    activeSource === "all" &&
+    activeLean !== "all";
+  const showAllSourceColumns =
+    activeView === "columns" &&
+    activeSource === "all" &&
+    activeLean === "all";
   const fetchSources = showSourceColumn ? [activeSource] : SOURCE_ORDER;
   const category = getCategory(categoryId as CategoryId);
 
@@ -113,10 +121,16 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
       ? visibleClusters.length
       : showSourceColumn
         ? (itemsBySource[activeSource]?.length ?? 0)
-        : visibleLeans.reduce(
-            (sum, lean) => sum + (itemsByLean[lean]?.length ?? 0),
-            0,
-          );
+        : showLeanColumns
+          ? visibleLeans.reduce(
+              (sum, lean) => sum + (itemsByLean[lean]?.length ?? 0),
+              0,
+            )
+          : SOURCE_ORDER.reduce(
+              (sum, sourceId) =>
+                sum + (itemsBySource[sourceId]?.length ?? 0),
+              0,
+            );
 
   return (
     <div className="mx-auto min-h-dvh max-w-6xl pb-8">
@@ -177,7 +191,7 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
               items={itemsBySource[activeSource] ?? []}
             />
           </div>
-        ) : (
+        ) : showLeanColumns ? (
           <div
             className={`grid gap-5 ${
               visibleLeans.length === 1
@@ -193,7 +207,17 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
               />
             ))}
           </div>
-        )}
+        ) : showAllSourceColumns ? (
+          <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+            {SOURCE_ORDER.map((sourceId) => (
+              <SourceColumn
+                key={sourceId}
+                sourceId={sourceId}
+                items={itemsBySource[sourceId] ?? []}
+              />
+            ))}
+          </div>
+        ) : null}
       </main>
 
       <footer className="hidden px-4 py-8 text-center text-xs text-slate-500 md:block">

@@ -13,7 +13,7 @@ export function CategoryNav({
   activeId,
   activeSourceId,
   activeLean = "all",
-  activeView = "grouped",
+  activeView = "columns",
 }: CategoryNavProps) {
   return (
     <nav
