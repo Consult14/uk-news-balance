@@ -1,35 +1,19 @@
 import Link from "next/link";
-import {
-  CATEGORIES,
-  CategoryId,
-  NewsSourceId,
-  PoliticalLean,
-} from "@/lib/config";
+import { CATEGORIES, NewsSourceId, PoliticalLean } from "@/lib/config";
+import { buildCategoryPageHref, ViewMode } from "@/lib/url";
 
 interface CategoryNavProps {
   activeId?: string;
   activeSourceId?: NewsSourceId | "all";
   activeLean?: PoliticalLean | "all";
-}
-
-function buildCategoryHref(
-  categoryId: CategoryId,
-  activeSourceId?: NewsSourceId | "all",
-  activeLean: PoliticalLean | "all" = "all",
-) {
-  const params = new URLSearchParams();
-  if (activeSourceId && activeSourceId !== "all") {
-    params.set("source", activeSourceId);
-  }
-  if (activeLean !== "all") params.set("lean", activeLean);
-  const query = params.toString();
-  return query ? `/${categoryId}?${query}` : `/${categoryId}`;
+  activeView?: ViewMode;
 }
 
 export function CategoryNav({
   activeId,
   activeSourceId,
   activeLean = "all",
+  activeView = "grouped",
 }: CategoryNavProps) {
   return (
     <nav
@@ -41,7 +25,11 @@ export function CategoryNav({
         return (
           <Link
             key={category.id}
-            href={buildCategoryHref(category.id, activeSourceId, activeLean)}
+            href={buildCategoryPageHref(category.id, {
+              source: activeSourceId,
+              lean: activeLean,
+              view: activeView,
+            })}
             className={`flex shrink-0 items-center gap-1.5 rounded-full px-4 py-2.5 text-sm font-medium transition-colors ${
               isActive
                 ? "bg-slate-900 text-white shadow-sm"

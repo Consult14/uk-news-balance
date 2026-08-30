@@ -3,6 +3,9 @@ import { CategoryNav } from "@/components/CategoryNav";
 import { LeanNav } from "@/components/LeanNav";
 import { LeanColumn, SourceColumn, SOURCE_ORDER } from "@/components/NewsCard";
 import { SourceNav } from "@/components/SourceNav";
+import { StoryFeed } from "@/components/StoryFeed";
+import { ViewToggle } from "@/components/ViewToggle";
+import { filterClustersByLean, filterClustersBySource } from "@/lib/cluster";
 import {
   CATEGORIES,
   CategoryId,
@@ -15,13 +18,14 @@ import {
   PoliticalLean,
   SOURCES_BY_LEAN,
 } from "@/lib/config";
-import { fetchCategoryNews } from "@/lib/rss";
+import { fetchCategoryClusters, fetchCategoryNews } from "@/lib/rss";
+import { isViewMode, ViewMode } from "@/lib/url";
 
 export const revalidate = 1800;
 
 interface PageProps {
   params: Promise<{ category: string }>;
-  searchParams: Promise<{ source?: string; lean?: string }>;
+  searchParams: Promise<{ source?: string; lean?: string; view?: string }>;
 }
 
 export function generateStaticParams() {
@@ -59,7 +63,8 @@ function groupItemsByLean(
 
 export default async function CategoryPage({ params, searchParams }: PageProps) {
   const { category: categoryId } = await params;
-  const { source: sourceParam, lean: leanParam } = await searchParams;
+  const { source: sourceParam, lean: leanParam, view: viewParam } =
+    await searchParams;
   const isValid = CATEGORIES.some((c) => c.id === categoryId);
   if (!isValid) notFound();
 
@@ -69,15 +74,31 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
   const activeLean: PoliticalLean | "all" =
     leanParam && isPoliticalLean(leanParam) ? leanParam : "all";
 
-  const showSourceView = activeSource !== "all";
+  const activeView: ViewMode =
+    viewParam && isViewMode(viewParam) ? viewParam : "grouped";
 
-  const fetchSources = showSourceView ? [activeSource] : SOURCE_ORDER;
+  const showSourceColumn = activeSource !== "all" && activeView === "columns";
+  const fetchSources = showSourceColumn ? [activeSource] : SOURCE_ORDER;
   const category = getCategory(categoryId as CategoryId);
-  const itemsBySource = await fetchCategoryNews(category.id, fetchSources);
 
-  const visibleLeans =
-    activeLean === "all" ? LEAN_ORDER : [activeLean];
+  const [itemsBySource, clusters] = await Promise.all([
+    activeView === "columns"
+      ? fetchCategoryNews(category.id, fetchSources)
+      : Promise.resolve({} as Record<NewsSourceId, never[]>),
+    activeView === "grouped"
+      ? fetchCategoryClusters(category.id, SOURCE_ORDER)
+      : Promise.resolve([]),
+  ]);
 
+  const visibleClusters =
+    activeView === "grouped"
+      ? filterClustersByLean(
+          filterClustersBySource(clusters, activeSource),
+          activeLean,
+        )
+      : [];
+
+  const visibleLeans = activeLean === "all" ? LEAN_ORDER : [activeLean];
   const itemsByLean = groupItemsByLean(itemsBySource);
 
   const fetchedAt = new Date().toLocaleString("en-GB", {
@@ -87,12 +108,22 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
     minute: "2-digit",
   });
 
-  const totalStories = showSourceView
-    ? (itemsBySource[activeSource]?.length ?? 0)
-    : visibleLeans.reduce(
-        (sum, lean) => sum + (itemsByLean[lean]?.length ?? 0),
-        0,
-      );
+  const storyCount =
+    activeView === "grouped"
+      ? visibleClusters.length
+      : showSourceColumn
+        ? (itemsBySource[activeSource]?.length ?? 0)
+        : visibleLeans.reduce(
+            (sum, lean) => sum + (itemsByLean[lean]?.length ?? 0),
+            0,
+          );
+
+  const introCopy =
+    activeView === "grouped"
+      ? "Stories grouped when outlets cover the same event. Swipe a card or tap the dots to switch between BBC, Guardian, Mail, and others."
+      : showSourceColumn
+        ? "Headlines from the selected outlet. Tap any story to read the full article on the original site."
+        : "Headlines grouped by political lean — Left, Centre, and Right. Tap any story to read the full article on the original site.";
 
   return (
     <div className="mx-auto min-h-dvh max-w-6xl pb-8">
@@ -108,7 +139,10 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
               </h1>
             </div>
             <div className="text-right text-xs text-slate-500">
-              <p>{totalStories} stories</p>
+              <p>
+                {storyCount}{" "}
+                {activeView === "grouped" ? "story groups" : "stories"}
+              </p>
               <p>Updated {fetchedAt}</p>
             </div>
           </div>
@@ -117,28 +151,37 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
             activeId={category.id}
             activeSourceId={activeSource}
             activeLean={activeLean}
+            activeView={activeView}
           />
           <SourceNav
             categoryId={category.id}
             activeSourceId={activeSource}
             activeLean={activeLean}
+            activeView={activeView}
           />
           <LeanNav
             categoryId={category.id}
             activeLean={activeLean}
             activeSourceId={activeSource}
+            activeView={activeView}
+          />
+          <ViewToggle
+            categoryId={category.id}
+            activeView={activeView}
+            activeSourceId={activeSource}
+            activeLean={activeLean}
           />
         </div>
       </header>
 
       <main className="px-4 py-5">
         <p className="mb-5 rounded-xl bg-white px-4 py-3 text-sm leading-relaxed text-slate-600 ring-1 ring-slate-200">
-          {showSourceView
-            ? "Headlines from the selected outlet. Tap any story to read the full article on the original site."
-            : "Headlines grouped by political lean — Left, Centre, and Right. Tap any story to read the full article on the original site."}
+          {introCopy}
         </p>
 
-        {showSourceView ? (
+        {activeView === "grouped" ? (
+          <StoryFeed clusters={visibleClusters} />
+        ) : showSourceColumn ? (
           <div className="max-w-xl">
             <SourceColumn
               sourceId={activeSource}

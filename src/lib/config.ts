@@ -41,9 +41,18 @@ export interface NewsItem {
   category: CategoryId;
 }
 
+export interface StoryCluster {
+  id: string;
+  canonicalTitle: string;
+  items: NewsItem[];
+  publishedAt: string;
+  sourceCount: number;
+}
+
 export interface CategoryFeed {
   category: Category;
   itemsBySource: Record<NewsSourceId, NewsItem[]>;
+  clusters: StoryCluster[];
   fetchedAt: string;
 }
 

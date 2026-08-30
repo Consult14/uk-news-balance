@@ -7,29 +7,20 @@ import {
   NewsSourceId,
   PoliticalLean,
 } from "@/lib/config";
+import { buildCategoryPageHref, ViewMode } from "@/lib/url";
 
 interface LeanNavProps {
   categoryId: CategoryId;
   activeLean: PoliticalLean | "all";
   activeSourceId: NewsSourceId | "all";
-}
-
-function buildLeanHref(
-  categoryId: CategoryId,
-  lean: PoliticalLean | "all",
-  activeSourceId: NewsSourceId | "all",
-) {
-  const params = new URLSearchParams();
-  if (activeSourceId !== "all") params.set("source", activeSourceId);
-  if (lean !== "all") params.set("lean", lean);
-  const query = params.toString();
-  return query ? `/${categoryId}?${query}` : `/${categoryId}`;
+  activeView?: ViewMode;
 }
 
 export function LeanNav({
   categoryId,
   activeLean,
   activeSourceId,
+  activeView = "grouped",
 }: LeanNavProps) {
   const options: { id: PoliticalLean | "all"; label: string; color?: string }[] =
     [
@@ -51,7 +42,11 @@ export function LeanNav({
         return (
           <Link
             key={id}
-            href={buildLeanHref(categoryId, id, activeSourceId)}
+            href={buildCategoryPageHref(categoryId, {
+              source: activeSourceId,
+              lean: id,
+              view: activeView,
+            })}
             className={`flex shrink-0 items-center rounded-full px-3.5 py-2 text-sm font-medium transition-colors ${
               isActive
                 ? "text-white shadow-sm"
@@ -72,5 +67,3 @@ export function LeanNav({
     </nav>
   );
 }
-
-export { buildLeanHref };

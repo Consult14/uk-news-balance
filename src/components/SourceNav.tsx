@@ -6,29 +6,20 @@ import {
   PoliticalLean,
   SOURCE_ORDER,
 } from "@/lib/config";
+import { buildCategoryPageHref, ViewMode } from "@/lib/url";
 
 interface SourceNavProps {
   categoryId: CategoryId;
   activeSourceId: NewsSourceId | "all";
   activeLean?: PoliticalLean | "all";
-}
-
-function buildSourceHref(
-  categoryId: CategoryId,
-  sourceId: NewsSourceId | "all",
-  activeLean: PoliticalLean | "all" = "all",
-) {
-  const params = new URLSearchParams();
-  if (sourceId !== "all") params.set("source", sourceId);
-  if (activeLean !== "all") params.set("lean", activeLean);
-  const query = params.toString();
-  return query ? `/${categoryId}?${query}` : `/${categoryId}`;
+  activeView?: ViewMode;
 }
 
 export function SourceNav({
   categoryId,
   activeSourceId,
   activeLean = "all",
+  activeView = "grouped",
 }: SourceNavProps) {
   return (
     <nav
@@ -36,7 +27,11 @@ export function SourceNav({
       aria-label="News sources"
     >
       <Link
-        href={buildSourceHref(categoryId, "all", activeLean)}
+        href={buildCategoryPageHref(categoryId, {
+          source: "all",
+          lean: activeLean,
+          view: activeView,
+        })}
         className={`flex shrink-0 items-center rounded-full px-3.5 py-2 text-sm font-medium transition-colors ${
           activeSourceId === "all"
             ? "bg-slate-900 text-white shadow-sm"
@@ -51,7 +46,11 @@ export function SourceNav({
         return (
           <Link
             key={sourceId}
-            href={buildSourceHref(categoryId, sourceId, activeLean)}
+            href={buildCategoryPageHref(categoryId, {
+              source: sourceId,
+              lean: activeLean,
+              view: activeView,
+            })}
             className={`flex shrink-0 items-center gap-1.5 rounded-full px-3.5 py-2 text-sm font-medium transition-colors ${
               isActive
                 ? "text-white shadow-sm"
@@ -70,5 +69,3 @@ export function SourceNav({
     </nav>
   );
 }
-
-export { buildSourceHref };

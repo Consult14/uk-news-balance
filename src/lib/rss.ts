@@ -1,9 +1,11 @@
 import Parser from "rss-parser";
+import { clusterStories } from "./cluster";
 import {
   CategoryId,
   NewsItem,
   NewsSourceId,
   NEWS_SOURCES,
+  StoryCluster,
   getFeedUrl,
 } from "./config";
 
@@ -82,4 +84,13 @@ export async function fetchCategoryNews(
     },
     {} as Record<NewsSourceId, NewsItem[]>,
   );
+}
+
+export async function fetchCategoryClusters(
+  category: CategoryId,
+  sourceIds: NewsSourceId[],
+): Promise<StoryCluster[]> {
+  const itemsBySource = await fetchCategoryNews(category, sourceIds);
+  const flatItems = sourceIds.flatMap((sourceId) => itemsBySource[sourceId] ?? []);
+  return clusterStories(flatItems);
 }
