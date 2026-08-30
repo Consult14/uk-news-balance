@@ -5,6 +5,8 @@ export type NewsSourceId =
   | "independent"
   | "sky";
 
+export type PoliticalLean = "left" | "centre" | "right";
+
 export type CategoryId =
   | "politics"
   | "uk"
@@ -198,6 +200,38 @@ export const SOURCE_ORDER: NewsSourceId[] = [
   "sky",
 ];
 
+export const LEAN_ORDER: PoliticalLean[] = ["left", "centre", "right"];
+
+export const LEAN_LABELS: Record<PoliticalLean, string> = {
+  left: "Left",
+  centre: "Centre",
+  right: "Right",
+};
+
+export const LEAN_COLORS: Record<PoliticalLean, string> = {
+  left: "#2563EB",
+  centre: "#64748B",
+  right: "#DC2626",
+};
+
+export const SOURCE_LEAN: Record<NewsSourceId, PoliticalLean> = {
+  guardian: "left",
+  independent: "left",
+  bbc: "centre",
+  sky: "centre",
+  dailymail: "right",
+};
+
+export const SOURCES_BY_LEAN: Record<PoliticalLean, NewsSourceId[]> = {
+  left: ["guardian", "independent"],
+  centre: ["bbc", "sky"],
+  right: ["dailymail"],
+};
+
 export function isNewsSourceId(value: string): value is NewsSourceId {
   return value in NEWS_SOURCES;
+}
+
+export function isPoliticalLean(value: string): value is PoliticalLean {
+  return value === "left" || value === "centre" || value === "right";
 }

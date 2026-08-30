@@ -1,7 +1,10 @@
 import {
+  LEAN_COLORS,
+  LEAN_LABELS,
   NewsItem,
   NewsSourceId,
   NEWS_SOURCES,
+  PoliticalLean,
   SOURCE_ORDER,
 } from "@/lib/config";
 
@@ -93,6 +96,40 @@ export function SourceColumn({ sourceId, items }: SourceColumnProps) {
       ) : (
         <ul className="space-y-3">
           {items.map((item) => (
+            <li key={item.id}>
+              <NewsCard item={item} />
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
+  );
+}
+
+interface LeanColumnProps {
+  lean: PoliticalLean;
+  items: NewsItem[];
+}
+
+export function LeanColumn({ lean, items }: LeanColumnProps) {
+  const sortedItems = [...items].sort(
+    (a, b) =>
+      new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime(),
+  );
+
+  return (
+    <section className="rounded-2xl bg-slate-50 p-4 ring-1 ring-slate-200">
+      <header className="mb-3 flex items-center justify-between gap-2">
+        <SourceBadge name={LEAN_LABELS[lean]} color={LEAN_COLORS[lean]} />
+        <span className="text-right text-xs text-slate-500">
+          {sortedItems.length} {sortedItems.length === 1 ? "story" : "stories"}
+        </span>
+      </header>
+      {sortedItems.length === 0 ? (
+        <p className="text-sm text-slate-500">No stories available</p>
+      ) : (
+        <ul className="space-y-3">
+          {sortedItems.map((item) => (
             <li key={item.id}>
               <NewsCard item={item} />
             </li>
