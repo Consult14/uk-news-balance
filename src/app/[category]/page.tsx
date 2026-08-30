@@ -1,17 +1,15 @@
 import { notFound } from "next/navigation";
 import { CategoryNav } from "@/components/CategoryNav";
+import { SourceColumn, SOURCE_ORDER } from "@/components/NewsCard";
 import { SourceNav } from "@/components/SourceNav";
-import { StoryFeed } from "@/components/StoryFeed";
-import { filterClustersBySource } from "@/lib/cluster";
 import {
   CATEGORIES,
   CategoryId,
   getCategory,
   isNewsSourceId,
   NewsSourceId,
-  SOURCE_ORDER,
 } from "@/lib/config";
-import { fetchCategoryClusters } from "@/lib/rss";
+import { fetchCategoryNews } from "@/lib/rss";
 
 export const revalidate = 1800;
 
@@ -45,9 +43,9 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
     sourceParam && isNewsSourceId(sourceParam) ? sourceParam : "all";
 
   const category = getCategory(categoryId as CategoryId);
-  const clusters = await fetchCategoryClusters(category.id, SOURCE_ORDER);
-
-  const visibleClusters = filterClustersBySource(clusters, activeSource);
+  const fetchSources =
+    activeSource === "all" ? SOURCE_ORDER : [activeSource];
+  const itemsBySource = await fetchCategoryNews(category.id, fetchSources);
 
   const fetchedAt = new Date().toLocaleString("en-GB", {
     day: "numeric",
@@ -55,6 +53,14 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
     hour: "2-digit",
     minute: "2-digit",
   });
+
+  const storyCount =
+    activeSource === "all"
+      ? SOURCE_ORDER.reduce(
+          (sum, sourceId) => sum + (itemsBySource[sourceId]?.length ?? 0),
+          0,
+        )
+      : (itemsBySource[activeSource]?.length ?? 0);
 
   return (
     <div className="mx-auto min-h-dvh max-w-6xl pb-8">
@@ -70,7 +76,7 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
               </h1>
             </div>
             <div className="text-right text-xs text-slate-500">
-              <p>{visibleClusters.length} story groups</p>
+              <p>{storyCount} stories</p>
               <p>Updated {fetchedAt}</p>
             </div>
           </div>
@@ -81,7 +87,24 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
       </header>
 
       <main className="px-4 py-5">
-        <StoryFeed clusters={visibleClusters} />
+        {activeSource === "all" ? (
+          <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+            {SOURCE_ORDER.map((sourceId) => (
+              <SourceColumn
+                key={sourceId}
+                sourceId={sourceId}
+                items={itemsBySource[sourceId] ?? []}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="max-w-xl">
+            <SourceColumn
+              sourceId={activeSource}
+              items={itemsBySource[activeSource] ?? []}
+            />
+          </div>
+        )}
       </main>
 
       <footer className="hidden px-4 py-8 text-center text-xs text-slate-500 md:block">
