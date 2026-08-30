@@ -56,38 +56,3 @@ export function CategoryNav({
     </nav>
   );
 }
-
-export function BottomNav({
-  activeId,
-  activeSourceId,
-  activeLean = "all",
-}: CategoryNavProps) {
-  return (
-    <nav
-      className="fixed inset-x-0 bottom-0 z-50 border-t border-slate-200 bg-white/95 backdrop-blur md:hidden"
-      aria-label="Mobile navigation"
-    >
-      <div className="scrollbar-hide flex gap-1 overflow-x-auto px-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-2">
-        {CATEGORIES.map((category) => {
-          const isActive = category.id === activeId;
-          return (
-            <Link
-              key={category.id}
-              href={buildCategoryHref(category.id, activeSourceId, activeLean)}
-              className={`flex min-w-[4rem] shrink-0 flex-col items-center gap-0.5 rounded-lg px-2 py-1.5 text-[10px] font-medium ${
-                isActive
-                  ? "bg-slate-100 text-slate-900"
-                  : "text-slate-500"
-              }`}
-            >
-              <span className="text-lg leading-none" aria-hidden>
-                {category.icon}
-              </span>
-              {category.name}
-            </Link>
-          );
-        })}
-      </div>
-    </nav>
-  );
-}

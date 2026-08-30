@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { BottomNav, CategoryNav } from "@/components/CategoryNav";
+import { CategoryNav } from "@/components/CategoryNav";
 import { LeanNav } from "@/components/LeanNav";
 import { LeanColumn, SourceColumn, SOURCE_ORDER } from "@/components/NewsCard";
 import { SourceNav } from "@/components/SourceNav";
@@ -95,7 +95,7 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
       );
 
   return (
-    <div className="mx-auto min-h-dvh max-w-6xl pb-24 md:pb-8">
+    <div className="mx-auto min-h-dvh max-w-6xl pb-8">
       <header className="sticky top-0 z-40 border-b border-slate-200/80 bg-slate-100/90 backdrop-blur">
         <div className="px-4 py-4">
           <div className="mb-1 flex items-center justify-between gap-3">
@@ -168,12 +168,6 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
         Headlines and snippets © respective publishers. Personal, non-commercial
         use via public RSS feeds.
       </footer>
-
-      <BottomNav
-        activeId={category.id}
-        activeSourceId={activeSource}
-        activeLean={activeLean}
-      />
     </div>
   );
 }
