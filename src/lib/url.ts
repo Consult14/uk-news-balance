@@ -1,4 +1,4 @@
-import { CategoryId, NewsSourceId } from "./config";
+import { CategoryId, NewsSourceId, PoliticalLean } from "./config";
 
 export type ViewMode = "grouped" | "columns";
 
@@ -10,6 +10,7 @@ export function buildCategoryPageHref(
   categoryId: CategoryId,
   options?: {
     source?: NewsSourceId | "all";
+    lean?: PoliticalLean | "all";
     view?: ViewMode;
   },
 ): string {
@@ -17,6 +18,10 @@ export function buildCategoryPageHref(
 
   if (options?.source && options.source !== "all") {
     params.set("source", options.source);
+  }
+
+  if (options?.lean && options.lean !== "all") {
+    params.set("lean", options.lean);
   }
 
   if (options?.view && options.view !== "grouped") {

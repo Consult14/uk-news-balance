@@ -1,5 +1,5 @@
 import { createHash } from "crypto";
-import { NewsItem, NewsSourceId, SOURCE_ORDER, StoryCluster } from "./config";
+import { NewsItem, NewsSourceId, SOURCE_ORDER, SOURCES_BY_LEAN, StoryCluster, PoliticalLean } from "./config";
 
 const STOP_WORDS = new Set([
   "a",
@@ -265,6 +265,23 @@ export function filterClustersBySource(
   return clusters
     .map((cluster) => {
       const items = cluster.items.filter((item) => item.source.id === sourceId);
+      if (items.length === 0) return null;
+      return makeCluster(items);
+    })
+    .filter((cluster): cluster is StoryCluster => cluster !== null);
+}
+
+export function filterClustersByLean(
+  clusters: StoryCluster[],
+  lean: PoliticalLean | "all",
+): StoryCluster[] {
+  if (lean === "all") return clusters;
+
+  const sourceIds = new Set(SOURCES_BY_LEAN[lean]);
+
+  return clusters
+    .map((cluster) => {
+      const items = cluster.items.filter((item) => sourceIds.has(item.source.id));
       if (items.length === 0) return null;
       return makeCluster(items);
     })

@@ -1,17 +1,19 @@
 import Link from "next/link";
-import { CategoryId, NewsSourceId } from "@/lib/config";
+import { CategoryId, NewsSourceId, PoliticalLean } from "@/lib/config";
 import { buildCategoryPageHref, ViewMode } from "@/lib/url";
 
 interface ViewToggleProps {
   categoryId: CategoryId;
   activeView: ViewMode;
   activeSourceId: NewsSourceId | "all";
+  activeLean?: PoliticalLean | "all";
 }
 
 export function ViewToggle({
   categoryId,
   activeView,
   activeSourceId,
+  activeLean = "all",
 }: ViewToggleProps) {
   const options: { id: ViewMode; label: string; description: string }[] = [
     {
@@ -22,7 +24,7 @@ export function ViewToggle({
     {
       id: "columns",
       label: "Columns",
-      description: "Side-by-side outlet columns",
+      description: "Headlines in Left, Centre, and Right columns",
     },
   ];
 
@@ -38,6 +40,7 @@ export function ViewToggle({
             key={option.id}
             href={buildCategoryPageHref(categoryId, {
               source: activeSourceId,
+              lean: activeLean,
               view: option.id,
             })}
             title={option.description}

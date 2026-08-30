@@ -3,6 +3,7 @@ import {
   CategoryId,
   NEWS_SOURCES,
   NewsSourceId,
+  PoliticalLean,
   SOURCE_ORDER,
 } from "@/lib/config";
 import { buildCategoryPageHref, ViewMode } from "@/lib/url";
@@ -10,12 +11,14 @@ import { buildCategoryPageHref, ViewMode } from "@/lib/url";
 interface SourceNavProps {
   categoryId: CategoryId;
   activeSourceId: NewsSourceId | "all";
+  activeLean?: PoliticalLean | "all";
   activeView?: ViewMode;
 }
 
 export function SourceNav({
   categoryId,
   activeSourceId,
+  activeLean = "all",
   activeView = "grouped",
 }: SourceNavProps) {
   return (
@@ -26,6 +29,7 @@ export function SourceNav({
       <Link
         href={buildCategoryPageHref(categoryId, {
           source: "all",
+          lean: activeLean,
           view: activeView,
         })}
         className={`flex shrink-0 items-center rounded-full px-3.5 py-2 text-sm font-medium transition-colors ${
@@ -44,6 +48,7 @@ export function SourceNav({
             key={sourceId}
             href={buildCategoryPageHref(categoryId, {
               source: sourceId,
+              lean: activeLean,
               view: activeView,
             })}
             className={`flex shrink-0 items-center gap-1.5 rounded-full px-3.5 py-2 text-sm font-medium transition-colors ${

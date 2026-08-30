@@ -1,16 +1,18 @@
 import Link from "next/link";
-import { CATEGORIES, NewsSourceId } from "@/lib/config";
+import { CATEGORIES, NewsSourceId, PoliticalLean } from "@/lib/config";
 import { buildCategoryPageHref, ViewMode } from "@/lib/url";
 
 interface CategoryNavProps {
   activeId?: string;
   activeSourceId?: NewsSourceId | "all";
+  activeLean?: PoliticalLean | "all";
   activeView?: ViewMode;
 }
 
 export function CategoryNav({
   activeId,
   activeSourceId,
+  activeLean = "all",
   activeView = "grouped",
 }: CategoryNavProps) {
   return (
@@ -25,6 +27,7 @@ export function CategoryNav({
             key={category.id}
             href={buildCategoryPageHref(category.id, {
               source: activeSourceId,
+              lean: activeLean,
               view: activeView,
             })}
             className={`flex shrink-0 items-center gap-1.5 rounded-full px-4 py-2.5 text-sm font-medium transition-colors ${
@@ -45,6 +48,7 @@ export function CategoryNav({
 export function BottomNav({
   activeId,
   activeSourceId,
+  activeLean = "all",
   activeView = "grouped",
 }: CategoryNavProps) {
   return (
@@ -60,6 +64,7 @@ export function BottomNav({
               key={category.id}
               href={buildCategoryPageHref(category.id, {
                 source: activeSourceId,
+                lean: activeLean,
                 view: activeView,
               })}
               className={`flex min-w-[4rem] shrink-0 flex-col items-center gap-0.5 rounded-lg px-2 py-1.5 text-[10px] font-medium ${

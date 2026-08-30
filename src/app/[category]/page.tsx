@@ -1,16 +1,22 @@
 import { notFound } from "next/navigation";
 import { BottomNav, CategoryNav } from "@/components/CategoryNav";
-import { SourceColumn, SOURCE_ORDER } from "@/components/NewsCard";
+import { LeanNav } from "@/components/LeanNav";
+import { LeanColumn, SourceColumn, SOURCE_ORDER } from "@/components/NewsCard";
 import { SourceNav } from "@/components/SourceNav";
 import { StoryFeed } from "@/components/StoryFeed";
 import { ViewToggle } from "@/components/ViewToggle";
-import { filterClustersBySource } from "@/lib/cluster";
+import { filterClustersByLean, filterClustersBySource } from "@/lib/cluster";
 import {
   CATEGORIES,
   CategoryId,
   getCategory,
   isNewsSourceId,
+  isPoliticalLean,
+  LEAN_ORDER,
+  NewsItem,
   NewsSourceId,
+  PoliticalLean,
+  SOURCES_BY_LEAN,
 } from "@/lib/config";
 import { fetchCategoryClusters, fetchCategoryNews } from "@/lib/rss";
 import { isViewMode, ViewMode } from "@/lib/url";
@@ -19,7 +25,7 @@ export const revalidate = 1800;
 
 interface PageProps {
   params: Promise<{ category: string }>;
-  searchParams: Promise<{ source?: string; view?: string }>;
+  searchParams: Promise<{ source?: string; lean?: string; view?: string }>;
 }
 
 export function generateStaticParams() {
@@ -37,26 +43,47 @@ export async function generateMetadata({ params }: PageProps) {
   };
 }
 
+function groupItemsByLean(
+  itemsBySource: Record<NewsSourceId, NewsItem[]>,
+): Record<PoliticalLean, NewsItem[]> {
+  const grouped: Record<PoliticalLean, NewsItem[]> = {
+    left: [],
+    centre: [],
+    right: [],
+  };
+
+  for (const lean of LEAN_ORDER) {
+    for (const sourceId of SOURCES_BY_LEAN[lean]) {
+      grouped[lean].push(...(itemsBySource[sourceId] ?? []));
+    }
+  }
+
+  return grouped;
+}
+
 export default async function CategoryPage({ params, searchParams }: PageProps) {
   const { category: categoryId } = await params;
-  const { source: sourceParam, view: viewParam } = await searchParams;
+  const { source: sourceParam, lean: leanParam, view: viewParam } =
+    await searchParams;
   const isValid = CATEGORIES.some((c) => c.id === categoryId);
   if (!isValid) notFound();
 
   const activeSource: NewsSourceId | "all" =
     sourceParam && isNewsSourceId(sourceParam) ? sourceParam : "all";
 
+  const activeLean: PoliticalLean | "all" =
+    leanParam && isPoliticalLean(leanParam) ? leanParam : "all";
+
   const activeView: ViewMode =
     viewParam && isViewMode(viewParam) ? viewParam : "grouped";
 
-  const visibleSources =
-    activeSource === "all" ? SOURCE_ORDER : [activeSource];
-
+  const showSourceColumn = activeSource !== "all" && activeView === "columns";
+  const fetchSources = showSourceColumn ? [activeSource] : SOURCE_ORDER;
   const category = getCategory(categoryId as CategoryId);
 
   const [itemsBySource, clusters] = await Promise.all([
     activeView === "columns"
-      ? fetchCategoryNews(category.id, visibleSources)
+      ? fetchCategoryNews(category.id, fetchSources)
       : Promise.resolve({} as Record<NewsSourceId, never[]>),
     activeView === "grouped"
       ? fetchCategoryClusters(category.id, SOURCE_ORDER)
@@ -65,8 +92,14 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
 
   const visibleClusters =
     activeView === "grouped"
-      ? filterClustersBySource(clusters, activeSource)
+      ? filterClustersByLean(
+          filterClustersBySource(clusters, activeSource),
+          activeLean,
+        )
       : [];
+
+  const visibleLeans = activeLean === "all" ? LEAN_ORDER : [activeLean];
+  const itemsByLean = groupItemsByLean(itemsBySource);
 
   const fetchedAt = new Date().toLocaleString("en-GB", {
     day: "numeric",
@@ -78,15 +111,19 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
   const storyCount =
     activeView === "grouped"
       ? visibleClusters.length
-      : visibleSources.reduce(
-          (sum, sourceId) => sum + (itemsBySource[sourceId]?.length ?? 0),
-          0,
-        );
+      : showSourceColumn
+        ? (itemsBySource[activeSource]?.length ?? 0)
+        : visibleLeans.reduce(
+            (sum, lean) => sum + (itemsByLean[lean]?.length ?? 0),
+            0,
+          );
 
   const introCopy =
     activeView === "grouped"
       ? "Stories grouped when outlets cover the same event. Swipe a card or tap the dots to switch between BBC, Guardian, Mail, and others."
-      : "Headlines from five UK outlets side by side. Tap any story to read the full article on the original site.";
+      : showSourceColumn
+        ? "Headlines from the selected outlet. Tap any story to read the full article on the original site."
+        : "Headlines grouped by political lean — Left, Centre, and Right. Tap any story to read the full article on the original site.";
 
   return (
     <div className="mx-auto min-h-dvh max-w-6xl pb-24 md:pb-8">
@@ -113,10 +150,18 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
           <CategoryNav
             activeId={category.id}
             activeSourceId={activeSource}
+            activeLean={activeLean}
             activeView={activeView}
           />
           <SourceNav
             categoryId={category.id}
+            activeSourceId={activeSource}
+            activeLean={activeLean}
+            activeView={activeView}
+          />
+          <LeanNav
+            categoryId={category.id}
+            activeLean={activeLean}
             activeSourceId={activeSource}
             activeView={activeView}
           />
@@ -124,6 +169,7 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
             categoryId={category.id}
             activeView={activeView}
             activeSourceId={activeSource}
+            activeLean={activeLean}
           />
         </div>
       </header>
@@ -135,19 +181,26 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
 
         {activeView === "grouped" ? (
           <StoryFeed clusters={visibleClusters} />
+        ) : showSourceColumn ? (
+          <div className="max-w-xl">
+            <SourceColumn
+              sourceId={activeSource}
+              items={itemsBySource[activeSource] ?? []}
+            />
+          </div>
         ) : (
           <div
             className={`grid gap-5 ${
-              visibleSources.length === 1
+              visibleLeans.length === 1
                 ? "max-w-xl"
                 : "md:grid-cols-2 xl:grid-cols-3"
             }`}
           >
-            {visibleSources.map((sourceId) => (
-              <SourceColumn
-                key={sourceId}
-                sourceId={sourceId}
-                items={itemsBySource[sourceId] ?? []}
+            {visibleLeans.map((lean) => (
+              <LeanColumn
+                key={lean}
+                lean={lean}
+                items={itemsByLean[lean] ?? []}
               />
             ))}
           </div>
@@ -162,6 +215,7 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
       <BottomNav
         activeId={category.id}
         activeSourceId={activeSource}
+        activeLean={activeLean}
         activeView={activeView}
       />
     </div>
