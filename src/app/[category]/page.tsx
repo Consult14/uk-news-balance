@@ -118,13 +118,6 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
             0,
           );
 
-  const introCopy =
-    activeView === "grouped"
-      ? "Stories grouped when outlets cover the same event. Swipe a card or tap the dots to switch between BBC, Guardian, Mail, and others."
-      : showSourceColumn
-        ? "Headlines from the selected outlet. Tap any story to read the full article on the original site."
-        : "Headlines grouped by political lean — Left, Centre, and Right. Tap any story to read the full article on the original site.";
-
   return (
     <div className="mx-auto min-h-dvh max-w-6xl pb-8">
       <header className="sticky top-0 z-40 border-b border-slate-200/80 bg-slate-100/90 backdrop-blur">
@@ -175,10 +168,6 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
       </header>
 
       <main className="px-4 py-5">
-        <p className="mb-5 rounded-xl bg-white px-4 py-3 text-sm leading-relaxed text-slate-600 ring-1 ring-slate-200">
-          {introCopy}
-        </p>
-
         {activeView === "grouped" ? (
           <StoryFeed clusters={visibleClusters} />
         ) : showSourceColumn ? (
