@@ -93,11 +93,7 @@ export async function fetchWeeklySummary(
   return fetchWeeklyClustersForCategory(categoryId, sourceIds);
 }
 
-export function buildWeeklyDigest(clusters: StoryCluster[]): string {
-  if (clusters.length === 0) {
-    return "No major stories were captured from UK outlets this week. Feeds may be temporarily unavailable.";
-  }
-
+function pickLeadHeadlines(clusters: StoryCluster[], count = 3): string[] {
   const topStories = [...clusters]
     .sort((a, b) => b.sourceCount - a.sourceCount)
     .slice(0, 5);
@@ -105,18 +101,90 @@ export function buildWeeklyDigest(clusters: StoryCluster[]): string {
   const widelyCovered = topStories.filter((cluster) => cluster.sourceCount >= 2);
   const leadStories = widelyCovered.length > 0 ? widelyCovered : topStories;
 
-  const headlines = leadStories
-    .slice(0, 3)
-    .map((cluster) => cluster.canonicalTitle)
-    .join("; ");
+  return leadStories.slice(0, count).map((cluster) => cluster.canonicalTitle);
+}
 
+export function buildCategoryWeeklyDigest(clusters: StoryCluster[]): string {
+  if (clusters.length === 0) {
+    return "Quiet week — no major stories captured from UK outlets.";
+  }
+
+  const headlines = pickLeadHeadlines(clusters);
+  const crossOutletCount = clusters.filter(
+    (cluster) => cluster.sourceCount >= 2,
+  ).length;
+
+  if (crossOutletCount >= 2) {
+    return `${crossOutletCount} stories covered by multiple outlets, including ${headlines.join("; ")}.`;
+  }
+
+  return `Key stories include ${headlines.join("; ")}.`;
+}
+
+export function buildWeeklyDigest(clusters: StoryCluster[]): string {
+  if (clusters.length === 0) {
+    return "No major stories were captured from UK outlets this week. Feeds may be temporarily unavailable.";
+  }
+
+  const headlines = pickLeadHeadlines(clusters);
   const crossOutletCount = clusters.filter(
     (cluster) => cluster.sourceCount >= 2,
   ).length;
 
   if (crossOutletCount >= 3) {
-    return `This week across UK outlets, ${clusters.length} stories stood out with ${crossOutletCount} covered by multiple publishers. Leading themes include: ${headlines}.`;
+    return `This week across UK outlets, ${clusters.length} stories stood out with ${crossOutletCount} covered by multiple publishers. Leading themes include: ${headlines.join("; ")}.`;
   }
 
-  return `This week's ${clusters.length} headline${clusters.length === 1 ? "" : "s"} from UK outlets include: ${headlines}.`;
+  return `This week's ${clusters.length} headline${clusters.length === 1 ? "" : "s"} from UK outlets include: ${headlines.join("; ")}.`;
+}
+
+export interface CategoryWeeklySummary {
+  id: CategoryId;
+  name: string;
+  icon: string;
+  digest: string;
+}
+
+function mergeWeeklyClusters(clusterGroups: StoryCluster[][]): StoryCluster[] {
+  const merged = clusterGroups.flat();
+  const seen = new Set<string>();
+
+  return merged
+    .filter((cluster) => {
+      if (seen.has(cluster.id)) return false;
+      seen.add(cluster.id);
+      return true;
+    })
+    .sort(
+      (a, b) =>
+        new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime(),
+    );
+}
+
+export async function fetchWeeklySummariesByCategory(
+  sourceIds: NewsSourceId[] = SOURCE_ORDER,
+): Promise<{
+  categorySummaries: CategoryWeeklySummary[];
+  allClusters: StoryCluster[];
+}> {
+  const clusterGroups = await Promise.all(
+    CATEGORIES.map(async (category) => ({
+      category,
+      clusters: await fetchWeeklyClustersForCategory(category.id, sourceIds),
+    })),
+  );
+
+  const categorySummaries = clusterGroups.map(({ category, clusters }) => ({
+    id: category.id,
+    name: category.name,
+    icon: category.icon,
+    digest: buildCategoryWeeklyDigest(clusters),
+  }));
+
+  return {
+    categorySummaries,
+    allClusters: mergeWeeklyClusters(
+      clusterGroups.map(({ clusters }) => clusters),
+    ),
+  };
 }

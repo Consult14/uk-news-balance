@@ -1,17 +1,16 @@
 import { StoryCluster } from "@/lib/config";
-import { getWeekRangeLabel } from "@/lib/weekly";
+import { CategoryWeeklySummary } from "@/lib/weekly";
 import { GroupedStoryCard } from "./GroupedStoryCard";
 
 interface WeeklySummarySectionProps {
+  categorySummaries: CategoryWeeklySummary[];
   clusters: StoryCluster[];
-  digest: string;
 }
 
 export function WeeklySummarySection({
+  categorySummaries,
   clusters,
-  digest,
 }: WeeklySummarySectionProps) {
-  const weekRange = getWeekRangeLabel();
   const topStories = [...clusters]
     .sort((a, b) => b.sourceCount - a.sourceCount)
     .slice(0, 6);
@@ -19,10 +18,20 @@ export function WeeklySummarySection({
   return (
     <div className="space-y-6">
       <section className="rounded-2xl bg-gradient-to-br from-indigo-50 to-white p-5 ring-1 ring-indigo-100">
-        <p className="text-xs font-semibold uppercase tracking-wider text-indigo-600">
-          {weekRange}
-        </p>
-        <p className="mt-3 text-sm leading-relaxed text-slate-700">{digest}</p>
+        <h2 className="text-sm font-semibold uppercase tracking-wider text-indigo-600">
+          Weekly Summary
+        </h2>
+        <ul className="mt-4 space-y-4">
+          {categorySummaries.map((category) => (
+            <li key={category.id} className="text-sm leading-relaxed text-slate-700">
+              <span className="font-semibold text-slate-900">
+                {category.icon} {category.name}
+              </span>
+              <span className="text-slate-500"> — </span>
+              {category.digest}
+            </li>
+          ))}
+        </ul>
       </section>
 
       {topStories.length > 0 ? (

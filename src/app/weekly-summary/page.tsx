@@ -1,6 +1,6 @@
 import { CategoryNav } from "@/components/CategoryNav";
 import { WeeklySummarySection } from "@/components/WeeklySummarySection";
-import { buildWeeklyDigest, fetchWeeklySummary } from "@/lib/weekly";
+import { fetchWeeklySummariesByCategory } from "@/lib/weekly";
 
 export const revalidate = 1800;
 
@@ -11,8 +11,8 @@ export const metadata = {
 };
 
 export default async function WeeklySummaryPage() {
-  const clusters = await fetchWeeklySummary("all");
-  const digest = buildWeeklyDigest(clusters);
+  const { categorySummaries, allClusters } =
+    await fetchWeeklySummariesByCategory();
 
   const fetchedAt = new Date().toLocaleString("en-GB", {
     day: "numeric",
@@ -47,7 +47,10 @@ export default async function WeeklySummaryPage() {
       </header>
 
       <main className="px-4 py-5">
-        <WeeklySummarySection clusters={clusters} digest={digest} />
+        <WeeklySummarySection
+          categorySummaries={categorySummaries}
+          clusters={allClusters}
+        />
       </main>
 
       <footer className="hidden px-4 py-8 text-center text-xs text-slate-500 md:block">
