@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { CategoryNav } from "@/components/CategoryNav";
 import { SourceColumn, SOURCE_ORDER } from "@/components/NewsCard";
 import { SourceNav } from "@/components/SourceNav";
+import { ViewModeNav } from "@/components/ViewModeNav";
 import {
   CATEGORIES,
   CategoryId,
@@ -81,6 +82,11 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
             </div>
           </div>
           <p className="mb-3 text-sm text-slate-600">{category.description}</p>
+          <ViewModeNav
+            activeMode="latest"
+            categoryId={category.id}
+            activeSourceId={activeSource}
+          />
           <CategoryNav activeId={category.id} activeSourceId={activeSource} />
           <SourceNav categoryId={category.id} activeSourceId={activeSource} />
         </div>
