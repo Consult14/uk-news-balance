@@ -5,41 +5,21 @@ import {
   NewsSourceId,
   SOURCE_ORDER,
 } from "@/lib/config";
-import { buildCategoryPageHref, buildWeeklySummaryHref, ViewMode } from "@/lib/url";
-import { WeeklyCategoryId } from "@/lib/weekly";
+import { buildCategoryPageHref } from "@/lib/url";
 
 interface SourceNavProps {
   categoryId: CategoryId;
   activeSourceId: NewsSourceId | "all";
-  viewMode?: ViewMode;
-  weeklyCategoryId?: WeeklyCategoryId;
 }
 
-function buildSourceHref(
-  categoryId: CategoryId,
-  source: NewsSourceId | "all",
-  viewMode: ViewMode,
-  weeklyCategoryId: WeeklyCategoryId,
-): string {
-  if (viewMode === "weekly") {
-    return buildWeeklySummaryHref(weeklyCategoryId, { source });
-  }
-  return buildCategoryPageHref(categoryId, { source });
-}
-
-export function SourceNav({
-  categoryId,
-  activeSourceId,
-  viewMode = "latest",
-  weeklyCategoryId = categoryId,
-}: SourceNavProps) {
+export function SourceNav({ categoryId, activeSourceId }: SourceNavProps) {
   return (
     <nav
       className="scrollbar-hide -mx-4 mt-2 flex gap-2 overflow-x-auto px-4 pb-1"
       aria-label="News sources"
     >
       <Link
-        href={buildSourceHref(categoryId, "all", viewMode, weeklyCategoryId)}
+        href={buildCategoryPageHref(categoryId, { source: "all" })}
         className={`flex shrink-0 items-center rounded-full px-3.5 py-2 text-sm font-medium transition-colors ${
           activeSourceId === "all"
             ? "bg-slate-900 text-white shadow-sm"
@@ -54,12 +34,7 @@ export function SourceNav({
         return (
           <Link
             key={sourceId}
-            href={buildSourceHref(
-              categoryId,
-              sourceId,
-              viewMode,
-              weeklyCategoryId,
-            )}
+            href={buildCategoryPageHref(categoryId, { source: sourceId })}
             className={`flex shrink-0 items-center gap-1.5 rounded-full px-3.5 py-2 text-sm font-medium transition-colors ${
               isActive
                 ? "text-white shadow-sm"
