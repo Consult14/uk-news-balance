@@ -15,3 +15,7 @@ export function buildCategoryPageHref(
   const query = params.toString();
   return query ? `/${categoryId}?${query}` : `/${categoryId}`;
 }
+
+export function buildWeeklySummaryHref(): string {
+  return "/weekly-summary";
+}

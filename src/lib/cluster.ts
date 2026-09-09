@@ -118,7 +118,11 @@ const SOURCE_PREFIX =
   /^(bbc news|the guardian|the independent|daily mail|sky news)\s*[-–:]\s*/i;
 
 const SIMILARITY_THRESHOLD = 0.55;
-const MAX_TIME_DIFF_MS = 24 * 60 * 60 * 1000;
+const DEFAULT_MAX_TIME_DIFF_MS = 24 * 60 * 60 * 1000;
+
+export interface ClusterOptions {
+  maxTimeDiffMs?: number;
+}
 
 function normalizeTitle(title: string): string {
   return title
@@ -159,11 +163,15 @@ function sharedSignificantTokens(a: Set<string>, b: Set<string>): number {
   return count;
 }
 
-function itemsAreSameStory(a: NewsItem, b: NewsItem): boolean {
+function itemsAreSameStory(
+  a: NewsItem,
+  b: NewsItem,
+  maxTimeDiffMs: number,
+): boolean {
   const timeDiff = Math.abs(
     new Date(a.publishedAt).getTime() - new Date(b.publishedAt).getTime(),
   );
-  if (timeDiff > MAX_TIME_DIFF_MS) return false;
+  if (timeDiff > maxTimeDiffMs) return false;
 
   const tokensA = tokenize(a.title);
   const tokensB = tokenize(b.title);
@@ -224,7 +232,11 @@ function makeCluster(items: NewsItem[]): StoryCluster {
   };
 }
 
-export function clusterStories(items: NewsItem[]): StoryCluster[] {
+export function clusterStories(
+  items: NewsItem[],
+  options?: ClusterOptions,
+): StoryCluster[] {
+  const maxTimeDiffMs = options?.maxTimeDiffMs ?? DEFAULT_MAX_TIME_DIFF_MS;
   const sortedItems = [...items].sort(
     (a, b) =>
       new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime(),
@@ -241,7 +253,11 @@ export function clusterStories(items: NewsItem[]): StoryCluster[] {
 
     for (const candidate of sortedItems) {
       if (assigned.has(candidate.id)) continue;
-      if (group.some((member) => itemsAreSameStory(member, candidate))) {
+      if (
+        group.some((member) =>
+          itemsAreSameStory(member, candidate, maxTimeDiffMs),
+        )
+      ) {
         group.push(candidate);
         assigned.add(candidate.id);
       }

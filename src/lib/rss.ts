@@ -16,7 +16,7 @@ const parser = new Parser({
   },
 });
 
-const ITEMS_PER_SOURCE = 5;
+const DEFAULT_ITEMS_PER_SOURCE = 5;
 
 function stripHtml(html: string): string {
   return html
@@ -38,6 +38,7 @@ function makeItemId(link: string, source: NewsSourceId): string {
 export async function fetchSourceFeed(
   category: CategoryId,
   sourceId: NewsSourceId,
+  limit = DEFAULT_ITEMS_PER_SOURCE,
 ): Promise<NewsItem[]> {
   const url = getFeedUrl(category, sourceId);
   const source = NEWS_SOURCES[sourceId];
@@ -47,7 +48,7 @@ export async function fetchSourceFeed(
 
     return (feed.items ?? [])
       .filter((item) => item.title && item.link)
-      .slice(0, ITEMS_PER_SOURCE)
+      .slice(0, limit)
       .map((item) => ({
         id: makeItemId(item.link!, sourceId),
         title: item.title!.trim(),
@@ -69,11 +70,12 @@ export async function fetchSourceFeed(
 export async function fetchCategoryNews(
   category: CategoryId,
   sourceIds: NewsSourceId[],
+  itemsPerSource = DEFAULT_ITEMS_PER_SOURCE,
 ): Promise<Record<NewsSourceId, NewsItem[]>> {
   const results = await Promise.all(
     sourceIds.map(async (sourceId) => ({
       sourceId,
-      items: await fetchSourceFeed(category, sourceId),
+      items: await fetchSourceFeed(category, sourceId, itemsPerSource),
     })),
   );
 
@@ -89,8 +91,18 @@ export async function fetchCategoryNews(
 export async function fetchCategoryClusters(
   category: CategoryId,
   sourceIds: NewsSourceId[],
+  options?: {
+    itemsPerSource?: number;
+    maxTimeDiffMs?: number;
+  },
 ): Promise<StoryCluster[]> {
-  const itemsBySource = await fetchCategoryNews(category, sourceIds);
+  const itemsBySource = await fetchCategoryNews(
+    category,
+    sourceIds,
+    options?.itemsPerSource,
+  );
   const flatItems = sourceIds.flatMap((sourceId) => itemsBySource[sourceId] ?? []);
-  return clusterStories(flatItems);
+  return clusterStories(flatItems, {
+    maxTimeDiffMs: options?.maxTimeDiffMs,
+  });
 }
