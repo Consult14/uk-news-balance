@@ -1,4 +1,5 @@
 import { CategoryNav } from "@/components/CategoryNav";
+import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { WeeklySummarySection } from "@/components/WeeklySummarySection";
 import { fetchWeeklySummariesByCategory } from "@/lib/weekly";
@@ -52,10 +53,7 @@ export default async function WeeklySummaryPage() {
         />
       </main>
 
-      <footer className="hidden px-4 py-8 text-center text-xs text-brand-navy/50 md:block">
-        Headlines and snippets © respective publishers. Personal, non-commercial
-        use via public RSS feeds.
-      </footer>
+      <SiteFooter />
     </div>
   );
 }
