@@ -1,12 +1,14 @@
 import { CategoryNav } from "@/components/CategoryNav";
 import { SiteFooter } from "@/components/SiteFooter";
+import { SiteHeader } from "@/components/SiteHeader";
 import { WeeklySummarySection } from "@/components/WeeklySummarySection";
 import { fetchWeeklySummariesByCategory } from "@/lib/weekly";
+import { BRAND } from "@/lib/theme";
 
 export const revalidate = 1800;
 
 export const metadata = {
-  title: "Weekly Summary — UK News Balance",
+  title: `Weekly Summary — ${BRAND.name}`,
   description:
     "A rolling 7-day digest of headlines across BBC, Guardian, Independent, Daily Mail, and Sky",
 };
@@ -24,28 +26,25 @@ export default async function WeeklySummaryPage() {
 
   return (
     <div className="mx-auto min-h-dvh max-w-6xl pb-8">
-      <header className="sticky top-0 z-40 border-b border-slate-200/80 bg-slate-100/90 backdrop-blur">
-        <div className="px-4 py-4">
+      <SiteHeader>
+        <div className="mt-3">
           <div className="mb-1 flex items-center justify-between gap-3">
             <div>
-              <p className="text-xs font-medium uppercase tracking-wider text-slate-500">
-                UK News Balance
-              </p>
-              <h1 className="text-xl font-bold text-slate-900 sm:text-2xl">
+              <h1 className="text-xl font-bold text-brand-navy sm:text-2xl">
                 📅 Weekly Summary
               </h1>
             </div>
-            <div className="text-right text-xs text-slate-500">
+            <div className="text-right text-xs text-brand-navy/60">
               <p>Updated {fetchedAt}</p>
             </div>
           </div>
-          <p className="mb-3 text-sm text-slate-600">
+          <p className="mb-3 text-sm text-brand-navy/70">
             A rolling 7-day digest of headlines grouped across BBC, Guardian,
             Independent, Daily Mail, and Sky.
           </p>
           <CategoryNav activeId="weekly-summary" />
         </div>
-      </header>
+      </SiteHeader>
 
       <main className="px-4 py-5">
         <WeeklySummarySection

@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import { Geist } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
+import { BRAND } from "@/lib/theme";
 
 const geist = Geist({
   subsets: ["latin"],
@@ -8,13 +10,17 @@ const geist = Geist({
 });
 
 export const metadata: Metadata = {
-  title: "UK News Balance",
+  title: BRAND.name,
   description:
-    "Compare headlines across UK news outlets — BBC, Guardian, Daily Mail, Independent, and Sky News.",
+    "Compare headlines across UK news outlets — BBC, Guardian, Daily Mail, Independent, and Sky News. Updated every hour.",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "UK News Balance",
+    title: BRAND.name,
+  },
+  icons: {
+    icon: "/logo.png",
+    apple: "/logo.png",
   },
 };
 
@@ -22,7 +28,7 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 5,
-  themeColor: "#0f172a",
+  themeColor: BRAND.colors.navy,
 };
 
 export default function RootLayout({
@@ -34,6 +40,7 @@ export default function RootLayout({
     <html lang="en-GB">
       <body className={`${geist.variable} min-h-dvh antialiased`}>
         {children}
+        <Analytics />
       </body>
     </html>
   );

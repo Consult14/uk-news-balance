@@ -12,7 +12,7 @@ import {
 const parser = new Parser({
   timeout: 10000,
   headers: {
-    "User-Agent": "UKNewsBalance/1.0 (personal news aggregator)",
+    "User-Agent": "UKNewsUpdatedEveryHour/1.0 (personal news aggregator)",
   },
 });
 

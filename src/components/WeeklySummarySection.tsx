@@ -17,17 +17,17 @@ export function WeeklySummarySection({
 
   return (
     <div className="space-y-6">
-      <section className="rounded-2xl bg-gradient-to-br from-indigo-50 to-white p-5 ring-1 ring-indigo-100">
-        <h2 className="text-sm font-semibold uppercase tracking-wider text-indigo-600">
+      <section className="rounded-2xl bg-gradient-to-br from-brand-light to-white p-5 ring-1 ring-brand-blue/20">
+        <h2 className="text-sm font-semibold uppercase tracking-wider text-brand-blue">
           Weekly Summary
         </h2>
         <ul className="mt-4 space-y-4">
           {categorySummaries.map((category) => (
-            <li key={category.id} className="text-sm leading-relaxed text-slate-700">
-              <span className="font-semibold text-slate-900">
+            <li key={category.id} className="text-sm leading-relaxed text-brand-navy/80">
+              <span className="font-semibold text-brand-navy">
                 {category.icon} {category.name}
               </span>
-              <span className="text-slate-500"> — </span>
+              <span className="text-brand-navy/50"> — </span>
               {category.digest}
             </li>
           ))}
@@ -36,7 +36,7 @@ export function WeeklySummarySection({
 
       {topStories.length > 0 ? (
         <section>
-          <h3 className="mb-3 text-sm font-semibold uppercase tracking-wider text-slate-500">
+          <h3 className="mb-3 text-sm font-semibold uppercase tracking-wider text-brand-navy/50">
             Top stories this week
           </h3>
           <ul className="grid gap-4 md:grid-cols-2">

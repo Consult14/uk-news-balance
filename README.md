@@ -1,4 +1,4 @@
-# UK News Balance
+# UK News Updated Every Hour
 
 A mobile-friendly news dashboard that pulls headlines from five major UK outlets side by side, so you can compare coverage across the political spectrum.
 

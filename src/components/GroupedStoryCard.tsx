@@ -65,7 +65,7 @@ export function GroupedStoryCard({ cluster }: GroupedStoryCardProps) {
 
   return (
     <article
-      className="rounded-xl bg-white shadow-sm ring-1 ring-slate-200/80 transition hover:-translate-y-0.5 hover:shadow-md"
+      className="rounded-xl bg-white shadow-sm ring-1 ring-brand-navy/10 transition hover:-translate-y-0.5 hover:shadow-md"
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >
@@ -82,36 +82,36 @@ export function GroupedStoryCard({ cluster }: GroupedStoryCardProps) {
               color={activeItem.source.color}
             />
             {hasMultiple ? (
-              <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-medium text-slate-600">
+              <span className="rounded-full bg-brand-light px-2 py-0.5 text-[11px] font-medium text-brand-navy/70">
                 {cluster.sourceCount} outlets
               </span>
             ) : null}
           </div>
           <time
-            className="shrink-0 text-xs text-slate-500"
+            className="shrink-0 text-xs text-brand-navy/50"
             dateTime={activeItem.publishedAt}
           >
             {formatRelativeTime(activeItem.publishedAt)}
           </time>
         </div>
 
-        <h3 className="text-[15px] font-semibold leading-snug text-slate-900 group-hover:text-blue-700">
+        <h3 className="text-[15px] font-semibold leading-snug text-brand-navy group-hover:text-brand-blue">
           {activeItem.title}
         </h3>
 
         {activeItem.summary ? (
-          <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-slate-600">
+          <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-brand-navy/70">
             {activeItem.summary}
           </p>
         ) : null}
       </a>
 
       {hasMultiple ? (
-        <div className="flex items-center justify-between gap-3 border-t border-slate-100 px-4 py-3">
+        <div className="flex items-center justify-between gap-3 border-t border-brand-navy/5 px-4 py-3">
           <button
             type="button"
             aria-label="Previous outlet"
-            className="rounded-md px-2 py-1 text-sm text-slate-500 transition hover:bg-slate-100 hover:text-slate-800"
+            className="rounded-md px-2 py-1 text-sm text-brand-navy/50 transition hover:bg-brand-light hover:text-brand-navy"
             onClick={() => goToIndex(activeIndex - 1)}
           >
             ‹
@@ -132,7 +132,7 @@ export function GroupedStoryCard({ cluster }: GroupedStoryCardProps) {
                   aria-selected={isActive}
                   aria-label={`${item.source.shortName} version`}
                   title={item.source.name}
-                  className="rounded-full transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-400"
+                  className="rounded-full transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-blue"
                   onClick={() => setActiveIndex(index)}
                 >
                   <span
@@ -151,7 +151,7 @@ export function GroupedStoryCard({ cluster }: GroupedStoryCardProps) {
           <button
             type="button"
             aria-label="Next outlet"
-            className="rounded-md px-2 py-1 text-sm text-slate-500 transition hover:bg-slate-100 hover:text-slate-800"
+            className="rounded-md px-2 py-1 text-sm text-brand-navy/50 transition hover:bg-brand-light hover:text-brand-navy"
             onClick={() => goToIndex(activeIndex + 1)}
           >
             ›

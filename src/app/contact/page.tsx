@@ -1,34 +1,27 @@
-import Link from "next/link";
 import { ContactForm } from "@/components/ContactForm";
 import { SiteFooter } from "@/components/SiteFooter";
+import { SiteHeader } from "@/components/SiteHeader";
+import { BRAND } from "@/lib/theme";
 
 export const metadata = {
-  title: "Contact — UK News Balance",
-  description: "Get in touch with the UK News Balance team.",
+  title: `Contact — ${BRAND.name}`,
+  description: "Get in touch with the Balanced UK NEWS team.",
 };
 
 export default function ContactPage() {
   return (
     <div className="mx-auto min-h-dvh max-w-6xl pb-8">
-      <header className="sticky top-0 z-40 border-b border-slate-200/80 bg-slate-100/90 backdrop-blur">
-        <div className="px-4 py-4">
-          <div className="mb-1">
-            <Link
-              href="/politics"
-              className="text-xs font-medium uppercase tracking-wider text-slate-500 hover:text-slate-700"
-            >
-              UK News Balance
-            </Link>
-            <h1 className="text-xl font-bold text-slate-900 sm:text-2xl">
-              ✉️ Contact
-            </h1>
-          </div>
-          <p className="text-sm text-slate-600">
+      <SiteHeader>
+        <div className="mt-3">
+          <h1 className="text-xl font-bold text-brand-navy sm:text-2xl">
+            ✉️ Contact
+          </h1>
+          <p className="mt-2 text-sm text-brand-navy/70">
             Questions, feedback, or bug reports — send us a message and
             we&apos;ll reply by email.
           </p>
         </div>
-      </header>
+      </SiteHeader>
 
       <main className="px-4 py-5">
         <div className="mx-auto max-w-lg">

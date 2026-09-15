@@ -2,11 +2,11 @@ import Link from "next/link";
 
 export function SiteFooter() {
   return (
-    <footer className="px-4 py-8 text-center text-xs text-slate-500">
+    <footer className="px-4 py-8 text-center text-xs text-brand-navy/50">
       <p>
         <Link
           href="/contact"
-          className="font-medium text-slate-600 underline-offset-2 hover:underline"
+          className="font-medium text-brand-navy/70 underline-offset-2 hover:underline"
         >
           Contact
         </Link>
