@@ -2,6 +2,12 @@
 
 @theme inline {
   --font-sans: var(--font-geist-sans);
+
+  --color-brand-navy: #00204a;
+  --color-brand-blue: #1a73e8;
+  --color-brand-red: #e31b23;
+  --color-brand-green: #28a745;
+  --color-brand-light: #f0f7ff;
 }
 
 @layer utilities {
@@ -16,8 +22,8 @@
 }
 
 body {
-  background: #f1f5f9;
-  color: #0f172a;
+  background: var(--color-brand-light);
+  color: var(--color-brand-navy);
   font-family: var(--font-sans), system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
 }

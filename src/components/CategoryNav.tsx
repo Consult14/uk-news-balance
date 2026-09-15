@@ -39,8 +39,8 @@ export function CategoryNav({
             href={href}
             className={`flex shrink-0 items-center gap-1.5 rounded-full px-4 py-2.5 text-sm font-medium transition-colors ${
               isActive
-                ? "bg-slate-900 text-white shadow-sm"
-                : "bg-white text-slate-700 ring-1 ring-slate-200 hover:bg-slate-50"
+                ? "bg-brand-navy text-white shadow-sm"
+                : "bg-white text-brand-navy ring-1 ring-brand-navy/15 hover:bg-brand-light"
             }`}
           >
             <span aria-hidden>{item.icon}</span>
