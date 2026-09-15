@@ -15,15 +15,15 @@ interface SourceNavProps {
 export function SourceNav({ categoryId, activeSourceId }: SourceNavProps) {
   return (
     <nav
-      className="scrollbar-hide -mx-4 mt-2 flex gap-2 overflow-x-auto px-4 pb-1"
+      className="scrollbar-hide -mx-4 flex h-9 items-center gap-1 overflow-x-auto px-4 sm:h-8"
       aria-label="News sources"
     >
       <Link
         href={buildCategoryPageHref(categoryId, { source: "all" })}
-        className={`flex shrink-0 items-center rounded-full px-3.5 py-2 text-sm font-medium transition-colors ${
+        className={`flex h-11 shrink-0 items-center rounded-full px-2.5 text-[13px] font-medium transition-colors sm:h-8 sm:px-2 sm:text-xs ${
           activeSourceId === "all"
-            ? "bg-slate-900 text-white shadow-sm"
-            : "bg-white text-slate-700 ring-1 ring-slate-200 hover:bg-slate-50"
+            ? "bg-slate-800 text-white"
+            : "bg-slate-100/80 text-slate-600 ring-1 ring-slate-200/60 hover:bg-slate-100"
         }`}
       >
         All
@@ -35,10 +35,10 @@ export function SourceNav({ categoryId, activeSourceId }: SourceNavProps) {
           <Link
             key={sourceId}
             href={buildCategoryPageHref(categoryId, { source: sourceId })}
-            className={`flex shrink-0 items-center gap-1.5 rounded-full px-3.5 py-2 text-sm font-medium transition-colors ${
+            className={`flex h-11 shrink-0 items-center rounded-full px-2.5 text-[13px] font-medium transition-colors sm:h-8 sm:px-2 sm:text-xs ${
               isActive
                 ? "text-white shadow-sm"
-                : "bg-white text-slate-700 ring-1 ring-slate-200 hover:bg-slate-50"
+                : "bg-slate-100/80 text-slate-600 ring-1 ring-slate-200/60 hover:bg-slate-100"
             }`}
             style={
               isActive

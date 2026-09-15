@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
-import { CategoryNav } from "@/components/CategoryNav";
+import { GlobalHeader } from "@/components/GlobalHeader";
+import { PageToolbar } from "@/components/PageToolbar";
 import { SourceColumn, SOURCE_ORDER } from "@/components/NewsCard";
-import { SourceNav } from "@/components/SourceNav";
 import {
   CATEGORIES,
   CategoryId,
@@ -25,10 +25,10 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: PageProps) {
   const { category: categoryId } = await params;
   const category = CATEGORIES.find((c) => c.id === categoryId);
-  if (!category) return { title: "UK News Balance" };
+  if (!category) return { title: "Balanced UK News" };
 
   return {
-    title: `${category.name} — UK News Balance`,
+    title: `${category.name} — Balanced UK News`,
     description: category.description,
   };
 }
@@ -63,30 +63,23 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
       : (itemsBySource[activeSource]?.length ?? 0);
 
   return (
-    <div className="mx-auto min-h-dvh max-w-6xl pb-8">
-      <header className="sticky top-0 z-40 border-b border-slate-200/80 bg-slate-100/90 backdrop-blur">
-        <div className="px-4 py-4">
-          <div className="mb-1 flex items-center justify-between gap-3">
-            <div>
-              <p className="text-xs font-medium uppercase tracking-wider text-slate-500">
-                UK News Balance
-              </p>
-              <h1 className="text-xl font-bold text-slate-900 sm:text-2xl">
-                {category.icon} {category.name}
-              </h1>
-            </div>
-            <div className="text-right text-xs text-slate-500">
-              <p>{storyCount} stories</p>
-              <p>Updated {fetchedAt}</p>
-            </div>
-          </div>
-          <p className="mb-3 text-sm text-slate-600">{category.description}</p>
-          <CategoryNav activeId={category.id} activeSourceId={activeSource} />
-          <SourceNav categoryId={category.id} activeSourceId={activeSource} />
-        </div>
-      </header>
+    <div className="mx-auto min-h-dvh max-w-6xl pb-6">
+      <GlobalHeader
+        activeCategoryId={category.id}
+        activeSourceId={activeSource}
+      />
 
-      <main className="px-4 py-5">
+      <PageToolbar
+        icon={category.icon}
+        title={category.name}
+        description={category.description}
+        storyCount={storyCount}
+        updatedAt={fetchedAt}
+        activeCategoryId={category.id}
+        activeSourceId={activeSource}
+      />
+
+      <main className="px-4 py-4 sm:px-5 sm:py-5 lg:px-6">
         {activeSource === "all" ? (
           <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
             {SOURCE_ORDER.map((sourceId) => (
@@ -107,7 +100,7 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
         )}
       </main>
 
-      <footer className="hidden px-4 py-8 text-center text-xs text-slate-500 md:block">
+      <footer className="hidden px-4 py-6 text-center text-xs text-slate-500 sm:px-5 lg:px-6 md:block">
         Headlines and snippets © respective publishers. Personal, non-commercial
         use via public RSS feeds.
       </footer>

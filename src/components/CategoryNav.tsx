@@ -23,7 +23,7 @@ export function CategoryNav({
 
   return (
     <nav
-      className="scrollbar-hide -mx-4 flex gap-2 overflow-x-auto px-4 pb-1"
+      className="scrollbar-hide -mx-4 flex h-[42px] items-center gap-1.5 overflow-x-auto px-4"
       aria-label="News categories"
     >
       {items.map((item) => {
@@ -37,13 +37,15 @@ export function CategoryNav({
           <Link
             key={item.id}
             href={href}
-            className={`flex shrink-0 items-center gap-1.5 rounded-full px-4 py-2.5 text-sm font-medium transition-colors ${
+            className={`flex h-11 shrink-0 items-center gap-1 rounded-full px-3 text-[14px] font-medium transition-colors sm:h-[34px] sm:px-2.5 sm:text-[13px] ${
               isActive
                 ? "bg-slate-900 text-white shadow-sm"
-                : "bg-white text-slate-700 ring-1 ring-slate-200 hover:bg-slate-50"
+                : "bg-white text-slate-700 ring-1 ring-slate-200/90 hover:bg-slate-50"
             }`}
           >
-            <span aria-hidden>{item.icon}</span>
+            <span aria-hidden className="text-xs sm:text-[11px]">
+              {item.icon}
+            </span>
             {item.name}
           </Link>
         );

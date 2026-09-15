@@ -54,9 +54,9 @@ export function NewsCard({ item }: NewsCardProps) {
       href={item.link}
       target="_blank"
       rel="noopener noreferrer"
-      className="group block rounded-xl bg-white p-4 shadow-sm ring-1 ring-slate-200/80 transition hover:-translate-y-0.5 hover:shadow-md active:scale-[0.99]"
+      className="group block rounded-xl bg-white p-3 shadow-sm ring-1 ring-slate-200/80 transition hover:-translate-y-0.5 hover:shadow-md active:scale-[0.99]"
     >
-      <div className="mb-2 flex items-start justify-between gap-2">
+      <div className="mb-1.5 flex items-start justify-between gap-2">
         <SourceBadge name={item.source.shortName} color={item.source.color} />
         <time
           className="shrink-0 text-xs text-slate-500"
@@ -65,7 +65,7 @@ export function NewsCard({ item }: NewsCardProps) {
           {formatRelativeTime(item.publishedAt)}
         </time>
       </div>
-      <h3 className="text-[15px] font-semibold leading-snug text-slate-900 group-hover:text-blue-700">
+      <h3 className="text-[17px] font-semibold leading-snug text-slate-900 group-hover:text-blue-700 sm:text-[16px]">
         {item.title}
       </h3>
       {item.summary ? (
@@ -86,15 +86,15 @@ export function SourceColumn({ sourceId, items }: SourceColumnProps) {
   const source = items[0]?.source ?? NEWS_SOURCES[sourceId];
 
   return (
-    <section className="rounded-2xl bg-slate-50 p-4 ring-1 ring-slate-200">
-      <header className="mb-3 flex items-center justify-between gap-2">
+    <section className="rounded-2xl bg-slate-50 p-3 ring-1 ring-slate-200">
+      <header className="mb-2.5 flex items-center justify-between gap-2">
         <SourceBadge name={source.shortName} color={source.color} />
         <span className="text-right text-xs text-slate-500">{source.lean}</span>
       </header>
       {items.length === 0 ? (
         <p className="text-sm text-slate-500">Feed temporarily unavailable</p>
       ) : (
-        <ul className="space-y-3">
+        <ul className="space-y-2.5">
           {items.map((item) => (
             <li key={item.id}>
               <NewsCard item={item} />
@@ -118,8 +118,8 @@ export function LeanColumn({ lean, items }: LeanColumnProps) {
   );
 
   return (
-    <section className="rounded-2xl bg-slate-50 p-4 ring-1 ring-slate-200">
-      <header className="mb-3 flex items-center justify-between gap-2">
+    <section className="rounded-2xl bg-slate-50 p-3 ring-1 ring-slate-200">
+      <header className="mb-2.5 flex items-center justify-between gap-2">
         <SourceBadge name={LEAN_LABELS[lean]} color={LEAN_COLORS[lean]} />
         <span className="text-right text-xs text-slate-500">
           {sortedItems.length} {sortedItems.length === 1 ? "story" : "stories"}
@@ -128,7 +128,7 @@ export function LeanColumn({ lean, items }: LeanColumnProps) {
       {sortedItems.length === 0 ? (
         <p className="text-sm text-slate-500">No stories available</p>
       ) : (
-        <ul className="space-y-3">
+        <ul className="space-y-2.5">
           {sortedItems.map((item) => (
             <li key={item.id}>
               <NewsCard item={item} />
