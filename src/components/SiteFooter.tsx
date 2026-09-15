@@ -6,9 +6,9 @@ export function SiteFooter() {
       <p>
         <Link
           href="/contact"
-          className="font-medium text-brand-navy/70 underline-offset-2 hover:underline"
+          className="text-sm font-medium text-brand-navy/70 underline-offset-2 hover:underline"
         >
-          Contact
+          Contact Us
         </Link>
       </p>
       <p className="mt-2">
