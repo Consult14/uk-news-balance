@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { CategoryNav } from "@/components/CategoryNav";
+import { SiteFooter } from "@/components/SiteFooter";
 import { SourceColumn, SOURCE_ORDER } from "@/components/NewsCard";
 import { SourceNav } from "@/components/SourceNav";
 import {
@@ -107,10 +108,7 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
         )}
       </main>
 
-      <footer className="hidden px-4 py-8 text-center text-xs text-slate-500 md:block">
-        Headlines and snippets © respective publishers. Personal, non-commercial
-        use via public RSS feeds.
-      </footer>
+      <SiteFooter />
     </div>
   );
 }
