@@ -8,7 +8,7 @@ interface StoryFeedProps {
 export function StoryFeed({ clusters }: StoryFeedProps) {
   if (clusters.length === 0) {
     return (
-      <p className="rounded-xl bg-white px-4 py-6 text-center text-sm text-slate-500 ring-1 ring-slate-200">
+      <p className="rounded-xl bg-white px-4 py-6 text-center text-sm text-brand-navy/50 ring-1 ring-brand-navy/10">
         No stories available right now. Feeds may be temporarily unavailable.
       </p>
     );

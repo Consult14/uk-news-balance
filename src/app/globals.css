@@ -2,6 +2,12 @@
 
 @theme inline {
   --font-sans: var(--font-geist-sans);
+
+  --color-brand-navy: #00204a;
+  --color-brand-blue: #1a73e8;
+  --color-brand-red: #e31b23;
+  --color-brand-green: #28a745;
+  --color-brand-light: #f0f7ff;
 }
 
 @layer utilities {
@@ -13,11 +19,26 @@
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
+
+  .scroll-hint-arrow {
+    animation: scroll-hint-nudge 1.4s ease-in-out infinite;
+  }
+
+  @keyframes scroll-hint-nudge {
+    0%,
+    100% {
+      transform: translateX(0);
+    }
+
+    50% {
+      transform: translateX(3px);
+    }
+  }
 }
 
 body {
-  background: #f1f5f9;
-  color: #0f172a;
+  background: var(--color-brand-light);
+  color: var(--color-brand-navy);
   font-family: var(--font-sans), system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
 }

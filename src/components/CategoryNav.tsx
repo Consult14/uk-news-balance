@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { CATEGORIES, NewsSourceId } from "@/lib/config";
 import { buildCategoryPageHref, buildWeeklySummaryHref } from "@/lib/url";
+import { ScrollablePillNav } from "./ScrollablePillNav";
 
 export type CategoryNavId = (typeof CATEGORIES)[number]["id"] | "weekly-summary";
 
@@ -22,10 +23,7 @@ export function CategoryNav({
   const items = [WEEKLY_SUMMARY, ...CATEGORIES];
 
   return (
-    <nav
-      className="scrollbar-hide -mx-4 flex gap-2 overflow-x-auto px-4 pb-1"
-      aria-label="News categories"
-    >
+    <ScrollablePillNav aria-label="News categories">
       {items.map((item) => {
         const isActive = item.id === activeId;
         const href =
@@ -39,8 +37,8 @@ export function CategoryNav({
             href={href}
             className={`flex shrink-0 items-center gap-1.5 rounded-full px-4 py-2.5 text-sm font-medium transition-colors ${
               isActive
-                ? "bg-slate-900 text-white shadow-sm"
-                : "bg-white text-slate-700 ring-1 ring-slate-200 hover:bg-slate-50"
+                ? "bg-brand-navy text-white shadow-sm"
+                : "bg-white text-brand-navy ring-1 ring-brand-navy/15 hover:bg-brand-light"
             }`}
           >
             <span aria-hidden>{item.icon}</span>
@@ -48,6 +46,6 @@ export function CategoryNav({
           </Link>
         );
       })}
-    </nav>
+    </ScrollablePillNav>
   );
 }

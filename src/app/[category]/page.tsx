@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { CategoryNav } from "@/components/CategoryNav";
 import { SourceColumn, SOURCE_ORDER } from "@/components/NewsCard";
+import { SiteHeader } from "@/components/SiteHeader";
 import { SourceNav } from "@/components/SourceNav";
 import {
   CATEGORIES,
@@ -10,6 +11,7 @@ import {
   NewsSourceId,
 } from "@/lib/config";
 import { fetchCategoryNews } from "@/lib/rss";
+import { BRAND } from "@/lib/theme";
 
 export const revalidate = 1800;
 
@@ -25,10 +27,10 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: PageProps) {
   const { category: categoryId } = await params;
   const category = CATEGORIES.find((c) => c.id === categoryId);
-  if (!category) return { title: "UK News Updated Every Hour" };
+  if (!category) return { title: BRAND.name };
 
   return {
-    title: `${category.name} — UK News Updated Every Hour`,
+    title: `${category.name} — ${BRAND.name}`,
     description: category.description,
   };
 }
@@ -64,27 +66,24 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
 
   return (
     <div className="mx-auto min-h-dvh max-w-6xl pb-8">
-      <header className="sticky top-0 z-40 border-b border-slate-200/80 bg-slate-100/90 backdrop-blur">
-        <div className="px-4 py-4">
+      <SiteHeader>
+        <div className="mt-3">
           <div className="mb-1 flex items-center justify-between gap-3">
             <div>
-              <p className="text-xs font-medium uppercase tracking-wider text-slate-500">
-                UK News Updated Every Hour
-              </p>
-              <h1 className="text-xl font-bold text-slate-900 sm:text-2xl">
+              <h1 className="text-xl font-bold text-brand-navy sm:text-2xl">
                 {category.icon} {category.name}
               </h1>
             </div>
-            <div className="text-right text-xs text-slate-500">
+            <div className="text-right text-xs text-brand-navy/60">
               <p>{storyCount} stories</p>
               <p>Updated {fetchedAt}</p>
             </div>
           </div>
-          <p className="mb-3 text-sm text-slate-600">{category.description}</p>
+          <p className="mb-3 text-sm text-brand-navy/70">{category.description}</p>
           <CategoryNav activeId={category.id} activeSourceId={activeSource} />
           <SourceNav categoryId={category.id} activeSourceId={activeSource} />
         </div>
-      </header>
+      </SiteHeader>
 
       <main className="px-4 py-5">
         {activeSource === "all" ? (
@@ -107,7 +106,7 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
         )}
       </main>
 
-      <footer className="hidden px-4 py-8 text-center text-xs text-slate-500 md:block">
+      <footer className="hidden px-4 py-8 text-center text-xs text-brand-navy/50 md:block">
         Headlines and snippets © respective publishers. Personal, non-commercial
         use via public RSS feeds.
       </footer>
