@@ -19,6 +19,21 @@
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
+
+  .scroll-hint-arrow {
+    animation: scroll-hint-nudge 1.4s ease-in-out infinite;
+  }
+
+  @keyframes scroll-hint-nudge {
+    0%,
+    100% {
+      transform: translateX(0);
+    }
+
+    50% {
+      transform: translateX(3px);
+    }
+  }
 }
 
 body {

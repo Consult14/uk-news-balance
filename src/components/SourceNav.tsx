@@ -6,6 +6,7 @@ import {
   SOURCE_ORDER,
 } from "@/lib/config";
 import { buildCategoryPageHref } from "@/lib/url";
+import { ScrollablePillNav } from "./ScrollablePillNav";
 
 interface SourceNavProps {
   categoryId: CategoryId;
@@ -14,10 +15,7 @@ interface SourceNavProps {
 
 export function SourceNav({ categoryId, activeSourceId }: SourceNavProps) {
   return (
-    <nav
-      className="scrollbar-hide -mx-4 mt-2 flex gap-2 overflow-x-auto px-4 pb-1"
-      aria-label="News sources"
-    >
+    <ScrollablePillNav aria-label="News sources" className="mt-2">
       <Link
         href={buildCategoryPageHref(categoryId, { source: "all" })}
         className={`flex shrink-0 items-center rounded-full px-3.5 py-2 text-sm font-medium transition-colors ${
@@ -50,6 +48,6 @@ export function SourceNav({ categoryId, activeSourceId }: SourceNavProps) {
           </Link>
         );
       })}
-    </nav>
+    </ScrollablePillNav>
   );
 }
