@@ -5,7 +5,7 @@ import { fetchWeeklySummariesByCategory } from "@/lib/weekly";
 export const revalidate = 1800;
 
 export const metadata = {
-  title: "Weekly Summary — UK News Balance",
+  title: "Weekly Summary — UK News Updated Every Hour",
   description:
     "A rolling 7-day digest of headlines across BBC, Guardian, Independent, Daily Mail, and Sky",
 };
@@ -28,7 +28,7 @@ export default async function WeeklySummaryPage() {
           <div className="mb-1 flex items-center justify-between gap-3">
             <div>
               <p className="text-xs font-medium uppercase tracking-wider text-slate-500">
-                UK News Balance
+                UK News Updated Every Hour
               </p>
               <h1 className="text-xl font-bold text-slate-900 sm:text-2xl">
                 📅 Weekly Summary

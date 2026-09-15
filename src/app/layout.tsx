@@ -8,13 +8,13 @@ const geist = Geist({
 });
 
 export const metadata: Metadata = {
-  title: "UK News Balance",
+  title: "UK News Updated Every Hour",
   description:
     "Compare headlines across UK news outlets — BBC, Guardian, Daily Mail, Independent, and Sky News.",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "UK News Balance",
+    title: "UK News Updated Every Hour",
   },
 };
 

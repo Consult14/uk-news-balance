@@ -25,10 +25,10 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: PageProps) {
   const { category: categoryId } = await params;
   const category = CATEGORIES.find((c) => c.id === categoryId);
-  if (!category) return { title: "UK News Balance" };
+  if (!category) return { title: "UK News Updated Every Hour" };
 
   return {
-    title: `${category.name} — UK News Balance`,
+    title: `${category.name} — UK News Updated Every Hour`,
     description: category.description,
   };
 }
@@ -69,7 +69,7 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
           <div className="mb-1 flex items-center justify-between gap-3">
             <div>
               <p className="text-xs font-medium uppercase tracking-wider text-slate-500">
-                UK News Balance
+                UK News Updated Every Hour
               </p>
               <h1 className="text-xl font-bold text-slate-900 sm:text-2xl">
                 {category.icon} {category.name}
